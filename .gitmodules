@@ -1,0 +1,6 @@
+[submodule "src/udp-rx-hdl"]
+	path = src/udp-rx-hdl
+	url = https://github.com/gamma-team/udp-rx-hdl
+[submodule "src/ip-rx-hdl"]
+	path = src/ip-rx-hdl
+	url = https://github.com/gamma-team/ip-rx-hdl
