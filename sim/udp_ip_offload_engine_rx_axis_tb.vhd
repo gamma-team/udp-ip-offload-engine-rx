@@ -95,12 +95,22 @@ BEGIN
         rstn <= '1';
         WAIT UNTIL rising_edge(clk);
         axis_send_file(clk, master.outp, "./tests/rx_integration_test.txt");
+        WAIT UNTIL rising_edge(clk) AND test_done;
+        axis_send_file(clk, master.outp, "./tests/rx_throughput_test.txt");
+        WAIT;
+    END PROCESS;
+
+    p_check_done: PROCESS
+    BEGIN
+        WAIT UNTIL rising_edge(clk) AND rstn = '1';
+        -- 2 packets in rx_integration_test.txt
+        WAIT UNTIL rising_edge(clk) AND slave.inp.tlast = '1';
         WAIT UNTIL rising_edge(clk) AND slave.inp.tlast = '1';
         test_done <= TRUE;
         WAIT UNTIL rising_edge(clk);
         test_done <= FALSE;
-        WAIT UNTIL rising_edge(clk);
-        axis_send_file(clk, master.outp, "./tests/rx_throughput_test.txt");
+        -- 2 packets in rx_throughput_test.txt
+        WAIT UNTIL rising_edge(clk) AND slave.inp.tlast = '1';
         WAIT UNTIL rising_edge(clk) AND slave.inp.tlast = '1';
         test_done <= TRUE;
         WAIT;
@@ -109,11 +119,11 @@ BEGIN
     p_test_record_output: PROCESS
     BEGIN
         WAIT UNTIL rstn = '1' AND rising_edge(clk);
-        axis_record(clk, slave.inp, test_done,
+        axis_record_data_only(clk, slave.inp, test_done,
             "./tests/rx_integration_test.out.txt");
         REPORT "Finished RX integration test log";
         WAIT UNTIL rising_edge(clk) AND NOT test_done;
-        axis_record(clk, slave.inp, test_done,
+        axis_record_data_only(clk, slave.inp, test_done,
             "./tests/rx_throughput_test.out.txt");
         REPORT "Finished RX throughput test log";
         WAIT;
