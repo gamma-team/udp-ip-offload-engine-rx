@@ -120,7 +120,13 @@ PACKAGE BODY axis_tb_util IS
     ) IS
     BEGIN
         axis_data.tdata <= data.data;
-        axis_data.tvalid <= '1';
+        -- don't perform transactions of all null bytes, even though it is
+        -- supported
+        IF data.valid /= x"00" THEN
+            axis_data.tvalid <= '1';
+        ELSE
+            axis_data.tvalid <= '0';
+        END IF;
         axis_data.tkeep <= data.valid;
         axis_data.tlast <= data.last;
     END PROCEDURE;
