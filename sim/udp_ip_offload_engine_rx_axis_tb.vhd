@@ -91,6 +91,7 @@ BEGIN
     p_test: PROCESS
     BEGIN
         WAIT UNTIL rising_edge(clk);
+        send_clear(master.outp);
         slave.outp.tready <= '1';
         rstn <= '1';
         WAIT UNTIL rising_edge(clk);
