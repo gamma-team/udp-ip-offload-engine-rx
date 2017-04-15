@@ -45,12 +45,14 @@ ENTITY udp_ip_offload_engine_rx IS
         Data_mac_in_start : IN STD_LOGIC;
         Data_mac_in_end : IN STD_LOGIC;
         Data_mac_in_err : IN STD_LOGIC;
+        Data_mac_in_ready : OUT STD_LOGIC;
 
         Data_app_out : OUT STD_LOGIC_VECTOR(width * 8 - 1 DOWNTO 0);
         Data_app_out_valid : OUT STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
         Data_app_out_start : OUT STD_LOGIC;
         Data_app_out_end : OUT STD_LOGIC;
-        Data_app_out_err : OUT STD_LOGIC
+        Data_app_out_err : OUT STD_LOGIC;
+        Data_app_out_ready : IN STD_LOGIC
     );
 END ENTITY;
 
@@ -67,11 +69,13 @@ ARCHITECTURE structure OF udp_ip_offload_engine_rx IS
             Data_in_start : IN STD_LOGIC;
             Data_in_end : IN STD_LOGIC;
             Data_in_err : IN STD_LOGIC;
+            Data_in_ready : OUT STD_LOGIC;
             Data_out : OUT STD_LOGIC_VECTOR(width * 8 - 1 DOWNTO 0);
             Data_out_valid : OUT STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
             Data_out_start : OUT STD_LOGIC;
             Data_out_end : OUT STD_LOGIC;
-            Data_out_err : OUT STD_LOGIC
+            Data_out_err : OUT STD_LOGIC;
+            Data_out_ready : IN STD_LOGIC
         );
     END COMPONENT;
     COMPONENT ip_rx IS
@@ -86,17 +90,19 @@ ARCHITECTURE structure OF udp_ip_offload_engine_rx IS
             Data_in_start : IN STD_LOGIC;
             Data_in_end : IN STD_LOGIC;
             Data_in_err : IN STD_LOGIC;
+            Data_in_ready : OUT STD_LOGIC;
             Data_out : OUT STD_LOGIC_VECTOR(width * 8 - 1 DOWNTO 0);
             Data_out_valid : OUT STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
             Data_out_start : OUT STD_LOGIC;
             Data_out_end : OUT STD_LOGIC;
-            Data_out_err : OUT STD_LOGIC
+            Data_out_err : OUT STD_LOGIC;
+            Data_out_ready : IN STD_LOGIC
         );
     END COMPONENT;
 
     SIGNAL rx_data : STD_LOGIC_VECTOR(width * 8 - 1 DOWNTO 0);
     SIGNAL rx_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
-    SIGNAL rx_start, rx_end, rx_err : STD_LOGIC;
+    SIGNAL rx_start, rx_end, rx_err, rx_ready : STD_LOGIC;
 BEGIN
     c_udp_rx: udp_rx
         GENERIC MAP (
@@ -110,11 +116,13 @@ BEGIN
             Data_in_start => rx_start,
             Data_in_end => rx_end,
             Data_in_err => rx_err,
+            Data_in_ready => rx_ready,
             Data_out => Data_app_out,
             Data_out_valid => Data_app_out_valid,
             Data_out_start => Data_app_out_start,
             Data_out_end => Data_app_out_end,
-            Data_out_err => Data_app_out_err
+            Data_out_err => Data_app_out_err,
+            Data_out_ready => Data_app_out_ready
         );
 
     c_ip_rx: ip_rx
@@ -129,10 +137,12 @@ BEGIN
             Data_in_start => Data_mac_in_start,
             Data_in_end => Data_mac_in_end,
             Data_in_err => Data_mac_in_err,
+            Data_in_ready => Data_mac_in_ready,
             Data_out => rx_data,
             Data_out_valid => rx_valid,
             Data_out_start => rx_start,
             Data_out_end => rx_end,
-            Data_out_err => rx_err
+            Data_out_err => rx_err,
+            Data_out_ready => rx_ready
         );
 END ARCHITECTURE;
