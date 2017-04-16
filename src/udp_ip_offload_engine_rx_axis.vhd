@@ -3,7 +3,7 @@
 -- The internal module interface is not quite AXI4-Stream compatible, this
 -- provides the glue.
 --
--- Copyright 2017 Patrick Gauvin
+-- Copyright 2017 Patrick Gauvin. All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are met:
@@ -148,22 +148,9 @@ BEGIN
 
     S00_axis_mac_tready <= data_mac_in_ready;
     data_mac_in <= S00_axis_mac_tdata;
-    PROCESS(S00_axis_mac_tkeep, S00_axis_mac_tvalid)
-        FUNCTION vector_and_bit(v : STD_LOGIC_VECTOR; b : STD_LOGIC)
-            RETURN STD_LOGIC_VECTOR IS
-            VARIABLE vout : STD_LOGIC_VECTOR(v'range);
-        BEGIN
-            FOR i IN v'range LOOP
-                vout(i) := b AND v(i);
-            END LOOP;
-            RETURN vout;
-        END FUNCTION;
-    BEGIN
-        -- The cores don't have a tvalid equivalent
-        data_mac_in_valid <= vector_and_bit(S00_axis_mac_tkeep,
-            S00_axis_mac_tvalid);
-    END PROCESS;
-    data_mac_in_end <= S00_axis_mac_tlast;
+    data_mac_in_valid <= S00_axis_mac_tkeep WHEN '1' = S00_axis_mac_tvalid
+        ELSE (OTHERS => '0');
+    data_mac_in_end <= S00_axis_mac_tlast AND S00_axis_mac_tvalid;
     data_mac_in_err <= '0';
     data_mac_in_start <= '1' WHEN NOT started AND '1' = S00_axis_mac_tvalid
         ELSE '0';

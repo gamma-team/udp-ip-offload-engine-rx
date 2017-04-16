@@ -1,6 +1,6 @@
 -- Top level of the UDP/IP offload engine receiver with the pure interface.
 --
--- Copyright 2017 Patrick Gauvin
+-- Copyright 2017 Patrick Gauvin. All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are met:
